@@ -27,6 +27,7 @@ const providerConfig = {
   ...(config.audience ? { audience: config.audience } : null),
   redirectUri: window.location.origin,
   //access_type: 'offline',
+  //adding more comments here
   scope:"offline_access",
   onRedirectCallback,
 };
