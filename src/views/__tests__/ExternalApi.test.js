@@ -2,6 +2,7 @@ import React from "react";
 import { ExternalApiComponent } from "../ExternalApi";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
+import configJson from auth_config.json
 
 jest.mock("@auth0/auth0-react", () => ({
   useAuth0: jest.fn(() => ({
@@ -14,10 +15,11 @@ jest.mock("@auth0/auth0-react", () => ({
 
 jest.mock("../../config", () => ({
   getConfig: jest.fn(() => ({
-    domain: "test-domain.com",
-    clientId: "123",
-    apiOrigin: "http://localhost:3001",
-    audience: "test-audience",
+    domain: configJson.domain,
+    clientId: configJson.clientId,
+    apiOrigin: configJson.apiOrigin,
+    audience: configJson.audience,
+    
   })),
 }));
 

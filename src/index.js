@@ -28,7 +28,9 @@ const providerConfig = {
   redirectUri: window.location.origin,
   //access_type: 'offline',
   //adding more comments here
-  scope:"offline_access",
+  scope:"offline_access, read:current_user, update: current_user_metadata",
+  response_mode: "code",
+  useRefreshTokens: true,
   onRedirectCallback,
 };
 
