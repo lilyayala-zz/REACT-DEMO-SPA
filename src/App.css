@@ -1,0 +1,52 @@
+.next-steps .fa-link {
+  margin-right: 5px;
+}
+
+/* Fix for use only flexbox in content area */
+.next-steps .row {
+  margin-bottom: 0;
+}
+
+.next-steps .col-md-5 {
+  margin-bottom: 3rem;
+}
+
+@media (max-width: 768px) {
+  .next-steps .col-md-5 {
+    margin-bottom: 0;
+  }
+}
+
+.spinner {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  height: 80vh;
+  width: 80vw;
+  background-color: white;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.result-block-container .result-block {
+  position: absolute;
+  display:contents;
+  opacity: 1;
+  white-space: break-spaces;
+  height: 80vh;
+  width: 20vw;
+}
+
+.result-block-container span{
+  position:inherit;
+  white-space: break-spaces;
+  justify-content:space-evenly;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  box-sizing: initial;
+  overflow:initial;
+  text-overflow:inherit;
+
+}
