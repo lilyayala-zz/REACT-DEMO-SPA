@@ -1,9 +1,0 @@
-{
-  "domain": "demo-lw.acmetest.org",
-  "clientId": "NQ7AB3ppxe8CZ9twcXvdj5F70kKWImqo",
-  "prompt": "login",
-  "audience": "https://demo-lw/react",
-  "appOrigin": "http://localhost:3000",
-  "apiOrigin": "http://localhost:3001",
-  "apiOrigin2": "http://localhost:3002"
-}
