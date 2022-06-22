@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Alert, Nav } from "reactstrap";
 import Highlight from "../components/Highlight";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
-import { getConfig } from "auth_config.json";
+import { getConfig } from "../config";
 import Loading from "../components/Loading";
 import jwt_decode from "jwt-decode";
 
