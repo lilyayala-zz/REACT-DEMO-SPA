@@ -5,20 +5,21 @@ import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { getConfig } from "../config";
 import Loading from "../components/Loading";
 import jwt_decode from "jwt-decode";
-import Row from "reactstrap/lib/Row";
-import NavItem from "reactstrap/lib/NavItem";
-import highlight from "highlight.js";
-import Navbar from "reactstrap/lib/Navbar";
-import NavbarText from "reactstrap/lib/NavbarText";
 
 export const ExternalApiComponent = () => {
   const { apiOrigin = "http://localhost:3001", audience } = getConfig();
+
+  const [isAuthorized, setIsAuthorized] = useState(false);
 
   const [state, setState] = useState({
     showResult: false,
     apiMessage: "",
     error: null,
     accessToken: "",
+    tokenExpiration: 0,
+    accessTokenUnixTime: 0,
+    tokenAudience: [],
+    wrongATMessage: false,
     decodedJWT: {},
 
   });
@@ -44,6 +45,7 @@ export const ExternalApiComponent = () => {
     }
 
     await callApi();
+    await loginWithPopup();
   };
 
   const handleLoginAgain = async () => {
@@ -61,12 +63,19 @@ export const ExternalApiComponent = () => {
     }
 
     await callApi();
+    await callApiWrongAccessToken();
   };
 
   const callApi = async () => {
     try {
       const token = await getAccessTokenSilently();
       var decoded = jwt_decode(token);
+      const decodedExpiration = decoded.exp;
+      const decodedAudience = decoded.aud;
+      console.log("Decoded Access Token", decoded);
+
+      const timeUntilExpiration =
+      decodedExpiration - Math.floor(Date.now() / 1000);
 
       const response = await fetch(`${apiOrigin}/api/external`, {
         headers: {
@@ -82,11 +91,50 @@ export const ExternalApiComponent = () => {
         apiMessage: responseData,
         accessToken: token,
         decodedJWT: decoded,
+        tokenExpiration: timeUntilExpiration,
+        accessTokenUnixTime: decodedExpiration,
+        tokenAudience: decodedAudience[0],
       });
+      setIsAuthorized(true);
     } catch (error) {
+      setIsAuthorized(false);
       setState({
         ...state,
         error: error.error,
+      });
+    }
+  };
+
+  const callApiWrongAccessToken = async () => {
+    try {
+      const token = await getAccessTokenSilently({
+        audience: "https://wrong-account-api.com/",
+      });
+      const decoded = jwt_decode(token);
+      const decodedAudience = decoded.aud;
+      console.log("Invalid AT: ", decoded);
+      console.log("AT Audience: ", decodedAudience[0]);
+
+      const response = await fetch(`${apiOrigin}/api/external`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const responseData = await response.json();
+
+      setState({
+        ...state,
+        apiMessage: responseData,
+      });
+      setIsAuthorized(false);
+    } catch (error) {
+      setIsAuthorized(false);
+      setState({
+        ...state,
+        wrongATMessage: true,
+        error: error.error,
+        showResult: true,
       });
     }
   };
@@ -182,7 +230,7 @@ export const ExternalApiComponent = () => {
             </p>
           </Alert>
         )}
-
+        <div className="justify-content-between">
         <Button
           color="primary"
           className="mt-5"
@@ -192,9 +240,18 @@ export const ExternalApiComponent = () => {
         >
           Get Access Token
         </Button>
-  
+        <br />
+          <Button
+            color="danger"
+            className="mt-5"
+            onClick={callApiWrongAccessToken}
+            disabled={!audience}
+          >
+            Wrong Audience Access Token
+          </Button>
+          </div>
       </div>
-
+      {isAuthorized && (
       <div className="result-block-container" href="#!">
         {state.showResult && (
           <div className="result-block" data-testid="api-result">
@@ -225,9 +282,20 @@ export const ExternalApiComponent = () => {
           </div>
         )}
       </div>
+      )}
+            {state.wrongATMessage && (
+        <div className="result-block-containerInvalid">
+          <div className="invalidToken">
+            Your access token is not valid for this API endpoint.
+          </div>
+        </div>
+      )}
     </>
   );
 };
+
+
+
 
 export default withAuthenticationRequired(ExternalApiComponent, {
   onRedirecting: () => <Loading />,
