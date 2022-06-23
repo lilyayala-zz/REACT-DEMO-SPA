@@ -238,7 +238,7 @@ export const ExternalApiComponent = () => {
           disabled={!audience}
           
         >
-          Get Access Token
+          Get Access Token for External API
         </Button>
         <br />
           <Button
@@ -247,7 +247,7 @@ export const ExternalApiComponent = () => {
             onClick={callApiWrongAccessToken}
             disabled={!audience}
           >
-          Unauthorized - Bad audience!
+          Get Access Token for Internal API
           </Button>
           </div>
       </div>
@@ -286,7 +286,7 @@ export const ExternalApiComponent = () => {
             {state.wrongATMessage && (
         <div className="result-block-containerInvalid">
           <div className="invalidToken">
-            Access Denied! Sorry, you don't have permission to access this API
+            Unauthorized! Sorry, you don't have permission to access this API
           </div>
         </div>
       )}
